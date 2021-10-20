@@ -1,14 +1,22 @@
 <?php
-
+require __DIR__ . '/vendor/autoload.php';
 
 class Client
 {
+    public string $url;
 
-    private static string $URL = "http://127.0.0.1:8091";
-
-    public static function addUser($name, $email)
+    /**
+     * Client constructor.
+     */
+    public function __construct()
     {
-        $ch = curl_init(self::$URL . '/user');
+        $details = include('config.php');
+        $this->url = $details['host'];
+    }
+
+    public function addUser(string $name, string $email)
+    {
+        $ch = curl_init($this->url . '/user');
 
         $data = [
             "name" => $name,
@@ -22,24 +30,38 @@ class Client
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
         $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        return $response;
+        return $httpcode;
     }
 
-    public static function getPostsByUser($userId)
+    /**
+     * @return Post[]
+     */
+    public function getPostsByUser(int $userId)
     {
-        $ch = curl_init(self::$URL . '/todo/' . $userId);
+        $ch = curl_init($this->url . '/todo/' . $userId);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HEADER, false);
         $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        return $response;
+        print $response;
+        if($httpcode != 200) {
+            return null;
+        }
+        $response = json_decode($response, true);
+        $rsl = array();
+        foreach ($response as $res) {
+            $rsl[] = new Post($res['id'], $res['name']);
+        }
+        return $rsl;
     }
 
-    public static function addPost($userId, $name)
+    public function addPost(int $userId, string $name)
     {
-        $ch = curl_init(self::$URL . '/todo/' . $userId);
+        $ch = curl_init($this->url . '/todo/' . $userId);
 
         $data = [
             "name" => $name,
@@ -51,13 +73,15 @@ class Client
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
         $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        return $response;
+
+        return $httpcode;
     }
 
-    public static function deletePost($id, $userId)
+    public function deletePost(int $id, int $userId)
     {
-        $ch = curl_init(self::$URL . '/todo/' . $userId);
+        $ch = curl_init($this->url . '/todo/' . $userId);
 
         $data = [
             "id" => $id,
@@ -70,17 +94,21 @@ class Client
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_HEADER, false);
         $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        return $response;
+        if($httpcode != 200) {
+            return null;
+        }
+        return json_decode($response);
     }
 
-    public static function updatePost($postId, $name, $userId)
+    public function updatePost(Post $post, int $userId)
     {
-        $ch = curl_init(self::$URL . '/todo/' . $userId);
+        $ch = curl_init($this->url . '/todo/' . $userId);
 
         $data = [
-            "id" => $postId,
-            "name" => $name,
+            "id" => $post->id,
+            "name" => $post->name,
         ];
 
         $data_json = json_encode($data);
@@ -88,11 +116,14 @@ class Client
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-
         $response = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
-        return $response;
+        print $httpcode;
+        if($httpcode != 200) {
+            return null;
+        }
+        return $httpcode;
     }
 
 
@@ -102,5 +133,5 @@ class Client
 #echo Client::getPostsByUser(1);
 #echo Client::addPost(1, 'ubei strelka');
 #echo Client::deletePost(2, 1);
-echo Client::updatePost(4, 'opyat rabotat', 1);
+#echo Client::updatePost(4, 'opyat rabotat', 1);
 

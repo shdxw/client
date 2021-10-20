@@ -1,0 +1,23 @@
+{
+  "name": "vendor_name/client",
+  "description": "client for spring back",
+  "minimum-stability": "stable",
+  "license": "secret",
+  "authors": [
+    {
+      "name": "egork",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "ext-curl": "*",
+    "ext-json": "*",
+    "phpunit/phpunit": "^8"
+  },
+  "autoload": {
+    "classmap": [
+      "models/Post.php",
+      "Client.php"
+    ]
+  }
+}
