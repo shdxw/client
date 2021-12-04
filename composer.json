@@ -1,23 +1,31 @@
 {
-  "name": "vendor_name/client",
-  "description": "client for spring back",
-  "minimum-stability": "stable",
-  "license": "secret",
   "authors": [
     {
       "name": "egork",
       "email": "email@example.com"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "Client\\": "src",
+      "Models\\": "models",
+      "Tests\\": "tests"
+    }
+  },
+  "description": "client for spring back",
+  "license": "secret",
+  "minimum-stability": "stable",
+  "name": "vendor_name/client",
   "require": {
     "ext-curl": "*",
-    "ext-json": "*",
-    "phpunit/phpunit": "^8"
+    "ext-json": "*"
   },
-  "autoload": {
-    "classmap": [
-      "models/Post.php",
-      "Client.php"
-    ]
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "*",
+    "phpmd/phpmd": "*",
+    "phpstan/phpstan": "^1.2.0",
+    "phpunit/phpunit": "^8",
+    "squizlabs/php_codesniffer": "3.*",
+    "symplify/easy-coding-standard": "*"
   }
 }

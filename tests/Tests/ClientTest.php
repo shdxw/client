@@ -1,6 +1,9 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
 
+namespace Tests;
+
+use Client\Client;
+use Models\Post;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
@@ -9,7 +12,7 @@ class ClientTest extends TestCase
     public function testAddUser()
     {
         $client = new Client();
-        $rsl = $client->addUser("koroko","jj@mail.ru");
+        $rsl = $client->addUser("koroko", "jj@mail.ru");
         print $rsl;
         $this->assertSame($rsl, 200, "user added");
     }
